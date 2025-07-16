@@ -20,7 +20,9 @@
 <body>
     <div class="container">
         {% if user.is_authenticated %}
-            <p class="text-end">Welcome, <strong>{{ user.username }}</strong> | 
+            <p class="text-end">Welcome, <strong>
+                <a href="{% url 'user_profile' user.username %}">{{ user.username }}</a>
+              </strong> |              
                 <a href="{% url 'post_create' %}">New Post</a> | 
                 <form method="post" action="{% url 'logout' %}" style="display:inline;">
                     {% csrf_token %}
