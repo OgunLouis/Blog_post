@@ -83,7 +83,11 @@ def register_view(request):
 # Create the Profile View
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
-    return render(request, 'blog/user_profile.html', {'profile_user': user})
+    user_posts = Post.objects.filter(author=user).order_by('-created_at')
+    return render(request, 'blog/user_profile.html', {
+        'profile_user': user,
+        'user_posts': user_posts
+    })
 
 
 # To edit user profile
