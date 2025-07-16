@@ -1,24 +1,24 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
-from .forms import PostForm
 from django.contrib.auth import login
-from .forms import RegisterForm
-# Create your views here.
-from django.shortcuts import render, get_object_or_404
-from .models import Post
 from django.contrib.auth.models import User
-from .forms import ProfileForm
-from django.contrib.auth.decorators import login_required
+
+from .forms import PostForm, RegisterForm, ProfileForm
+from .models import Post, Profile
+from .utils import upload_to_imagekit
+
+
 def post_list(request):
     posts = Post.objects.all().order_by('-created_at')  # This shows the newest first
     return render(request, 'blog/post_list.html', {'posts': posts})
+
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     return render(request, 'blog/post_detail.html', {'post': post})
 
-#To create posts
+
+# To create posts
 @login_required
 def post_create(request):
     if request.method == 'POST':
@@ -32,7 +32,8 @@ def post_create(request):
         form = PostForm()
     return render(request, 'blog/post_form.html', {'form': form})
 
-#To Edit Posts
+
+# To Edit Posts
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -50,7 +51,8 @@ def post_edit(request, pk):
 
     return render(request, 'blog/post_form.html', {'form': form})
 
-#To delete post
+
+# To delete post
 @login_required
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -65,7 +67,7 @@ def post_delete(request, pk):
     return render(request, 'blog/post_confirm_delete.html', {'post': post})
 
 
-#To Signup
+# To Signup
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -77,25 +79,33 @@ def register_view(request):
         form = RegisterForm()
     return render(request, 'blog/register.html', {'form': form})
 
-#Create the Profile View
-from .models import Profile
+
+# Create the Profile View
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
     return render(request, 'blog/user_profile.html', {'profile_user': user})
 
 
-
-#To edit user profile
+# To edit user profile
 @login_required
 def edit_profile(request):
     profile = request.user.profile
-
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            image = request.FILES.get('image')
+            if image:
+                image_url = upload_to_imagekit(image)
+                if image_url:
+                    profile.image_url = image_url
+
+            profile.about = form.cleaned_data['about']
+            profile.age = form.cleaned_data['age']
+            profile.save()
             return redirect('user_profile', username=request.user.username)
     else:
-        form = ProfileForm(instance=profile)
-
+        form = ProfileForm(initial={
+            'about': profile.about,
+            'age': profile.age
+        })
     return render(request, 'blog/edit_profile.html', {'form': form})

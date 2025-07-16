@@ -17,7 +17,8 @@ class RegisterForm(UserCreationForm):
 from django import forms
 from .models import Profile
 
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['image', 'about', 'age']
+class ProfileForm(forms.Form):
+    image = forms.ImageField(required=False)
+    about = forms.CharField(widget=forms.Textarea)
+    age = forms.IntegerField(required=False)
+
