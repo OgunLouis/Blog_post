@@ -137,7 +137,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_FILE_STORAGE = 'imagekitio_storage.storage.MediaStorage'
+DEFAULT_FILE_STORAGE = 'clouidinary'
 
 #MEDIA_URL = '/media/'
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
