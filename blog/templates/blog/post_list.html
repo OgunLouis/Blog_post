@@ -5,6 +5,10 @@
 {% block content %}
 <h1 class="mb-4">📝 Rant & Blog </h1>
 
+{% if request.GET.q %}
+    <p class="text-muted">Search results for "<strong>{{ request.GET.q }}</strong>":</p>
+{% endif %}
+
 {% if user.is_authenticated %}
     <p>
         <a class="btn btn-success mb-3" href="{% url 'post_create' %}">+ New Post</a>
@@ -15,7 +19,7 @@
     </p>
 {% endif %}
 
-{% for post in posts %}
+{% for post in page_obj %}
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <h3 class="card-title">
@@ -26,10 +30,41 @@
                 <a href="{% url 'user_profile' username=post.author.username %}">{{ post.author.username }}</a>
                 | {{ post.created_at }}
             </p>
-            <p class="card-text">{{ post.body|truncatechars:200 }}</p>
+            
         </div>
     </div>
 {% empty %}
-    <p>No posts yet.</p>
+    <p class="text-danger">No posts found{{ request.GET.q|yesno:", matching your search." }}</p>
 {% endfor %}
+
+<!-- Pagination controls -->
+<div class="pagination mt-4">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}page=1">« First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}page={{ page_obj.previous_page_number }}">‹ Prev</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}page={{ page_obj.next_page_number }}">Next ›</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last »</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
 {% endblock %}

@@ -12,6 +12,10 @@
         | {{ post.created_at }}
     </p>
 
+    {% if post.image %}
+  <img src="{{ post.image.url }}" class="img-fluid rounded" alt="Post Image">
+{% endif %}
+
     <div class="mb-4">
         <p>{{ post.body }}</p>
     </div>

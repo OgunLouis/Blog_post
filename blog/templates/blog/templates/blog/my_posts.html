@@ -1,0 +1,13 @@
+<h2>My Posts</h2>
+
+{% if posts %}
+  {% for post in posts %}
+    <div style="margin-bottom: 20px;">
+      <h3><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h3>
+      <p>Created: {{ post.created_at }}</p>
+      <p>{{ post.content|truncatechars:200 }}</p>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>You have not created any posts yet.</p>
+{% endif %}

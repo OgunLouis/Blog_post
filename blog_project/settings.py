@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
+from imagekitio import ImageKit
 from decouple import config
 import dj_database_url
 import os
@@ -47,8 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
-    'cloudinary',
-    'cloudinary_storage',
+    
 ]
 
 MIDDLEWARE = [
@@ -86,7 +85,7 @@ WSGI_APPLICATION = 'blog_project.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
+  'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
 #DATABASES = {
@@ -138,7 +137,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'imagekitio_storage.storage.MediaStorage'
 
 #MEDIA_URL = '/media/'
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
